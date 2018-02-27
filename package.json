@@ -1,0 +1,30 @@
+{
+  "name": "scheduler",
+  "version": "1.0.0",
+  "description": "basic scheduler to help a sheets client",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --opts ./mocha.opts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aheld/scheduler.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aheld/scheduler/issues"
+  },
+  "homepage": "https://github.com/aheld/scheduler#readme",
+  "dependencies": {
+    "typescript": "^2.7.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.2",
+    "@types/mocha": "^2.2.48",
+    "chai": "^4.1.2",
+    "mocha": "^5.0.1",
+    "ts-node": "^5.0.0"
+  }
+}
