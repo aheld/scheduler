@@ -6,7 +6,7 @@ function schedule(hourslots: Array<HourSlot>): Array<Shift> {
     var ps = hourslots.filter((x)=> x.driversNeeded === drivers)
     var startTime = Math.min(...hourslots.map((x)=>x.startTime))
     var duration = Math.max(...hourslots.map((x)=>x.startTime)) - startTime + 1
-    console.log(`Shift(${startTime}, ${duration}, ${drivers})`)
+    // console.log(`Shift(${startTime}, ${duration}, ${drivers})`)
     var baseShift = new Shift(startTime, duration, drivers)
     
     var ns = hourslots.map((x) => {return new HourSlot(x.startTime)})
@@ -32,7 +32,7 @@ class HourSlot {
 }
 
 class Shift {
-    private startTime: number
+    public startTime: number
     private duration: number
     private driversNeeded: number
     
@@ -42,7 +42,7 @@ class Shift {
         this.driversNeeded = driversNeeded
     }
 
-    public toString = (): string => `Shift(${startTime}, ${duration}, ${drivers})`
+    public toString = (): string => `Shift(${startTime}, ${duration}, ${driversNeeded})`
 }
 
 

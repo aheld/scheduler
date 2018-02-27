@@ -3,24 +3,32 @@ import 'mocha'
 
 import {  HourSlot, Shift, schedule } from '../models'
 
+function stringify(input: Array<Shift>){
+  return input.map((x)=>x.toString())
+}
+
+function equalShifts(actual, expected){
+  expect(stringify(actual)).to.deep.equal(
+    stringify(expected)
+  )
+}
 describe('Schedule a day', () => {
     it('Schedule an empty shift', () => {
       expect(schedule([])).to.deep.equal([]);
     });
     it('Schedule an simple shift', () => {
-      expect(schedule([new HourSlot(9, 1)])).to
-        .deep.equal([new Shift(9, 1, 1)]);
+      equalShifts(schedule([new HourSlot(9, 1)]),[new Shift(9, 1, 1)])
     });
     it('Schedule an simple shift with 2 drivers', () => {
-      expect(schedule([new HourSlot(9, 2)])).to
-        .deep.equal([new Shift(9, 1, 2)]);
+      equalShifts(schedule([new HourSlot(9, 2)]), [new Shift(9, 1, 2)])
     });
     it('Schedule an simple 2 hours shift', () => {
-      expect(schedule(
+      equalShifts(
+        schedule(
           [new HourSlot(9, 1),
            new HourSlot(10, 1)]
-        )).to
-        .deep.equal([new Shift(9, 2, 1)]);
+        ),
+          [new Shift(9, 2, 1)])
     });
 
     var nineAmTests = [
@@ -34,11 +42,11 @@ describe('Schedule a day', () => {
     nineAmTests.forEach(function(tc: Object){
       it(`Schedules ${tc.slots} for ${tc.shifts.length} shift`, function() {
         var slots = tc.slots.map((x, i) => { return new HourSlot(9 + i, x)})
+        var shifts = schedule(slots)
         var expectedShifts = tc.shifts.map(
             (x)=> {
                 return new Shift(x[0], x[1], x[2]) })
-        var shifts = schedule(slots)
-        expect(shifts).to.deep.equal(expectedShifts)
+        equalShifts(shifts, expectedShifts)
       });
     });
 });
