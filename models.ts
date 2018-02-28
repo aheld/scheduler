@@ -1,19 +1,35 @@
 
 function schedule(hourslots: Array<HourSlot>): Array<Shift> {
     if (hourslots.length == 0) return []
-    var slot = hourslots[0]
-    var drivers = Math.max(...hourslots.map(x => x.driversNeeded))
-    var ps = hourslots.filter((x)=> x.driversNeeded === drivers)
-    var startTime = Math.min(...hourslots.map((x)=>x.startTime))
-    var duration = Math.max(...hourslots.map((x)=>x.startTime)) - startTime + 1
-    // console.log(`Shift(${startTime}, ${duration}, ${drivers})`)
-    var baseShift = new Shift(startTime, duration, drivers)
-    
-    var ns = hourslots.map((x) => {return new HourSlot(x.startTime)})
+    var cmd = new ScheduleCommand([], hourslots, 0)
+    return scheduleBlock(cmd).shifts
+}
 
+function scheduleBlock(cmd: ScheduleCommand): ScheduleCommand{
+    var drivers = Math.min(...cmd.gaps.map(x => x.driversNeeded).filter((x)=>x>0))
+    var startTime = Math.min(...cmd.gaps.map((x)=>x.startTime))
+    var duration = Math.max(...cmd.gaps.map((x)=>x.startTime)) - startTime + 1
+    var shift = new Shift(startTime, duration, drivers)
+    var newGap = cmd.gaps.map((x) => {return new HourSlot(x.startTime, x.driversNeeded - drivers)}).filter((x)=>x.driversNeeded > 0)
+    var acc = new ScheduleCommand(cmd.shifts.concat(shift), newGap, cmd.generation + 1)
+    if (acc.isDone()) return acc
+    return scheduleBlock(acc)
+}
 
-    return [ baseShift ]
+class ScheduleCommand{
+    public shifts: Array<Shift>
+    public gaps: Array<HourSlot>
+    public generation = 0
 
+    constructor(shifts: Array<Shift>, gaps: Array<HourSlot>, generation: number) {
+        this.shifts = shifts
+        this.gaps = gaps
+        this.generation = generation
+    }
+
+    public isDone(){
+        return (this.generation > 10 || this.gaps.every((x)=> x.driversNeeded == 0 )) 
+    }
 }
 
 
@@ -33,8 +49,8 @@ class HourSlot {
 
 class Shift {
     public startTime: number
-    private duration: number
-    private driversNeeded: number
+    public duration: number
+    public driversNeeded: number
     
     constructor(startTime: number, duration: number, driversNeeded: number) {
         this.startTime = startTime
@@ -42,7 +58,7 @@ class Shift {
         this.driversNeeded = driversNeeded
     }
 
-    public toString = (): string => `Shift(${startTime}, ${duration}, ${driversNeeded})`
+    public toString = (): string => `Shift(${startTime}, ${duration}, ${this.driversNeeded})`
 }
 
 
